@@ -1,10 +1,8 @@
 //! A crate to allow converting generic primitives into bytes.
 //!
 //! Defines `TryFromBytes` and `IntoBytes` traits and implements them on all numerical primitives.
-#![feature(const_generics)]
-#![feature(const_evaluatable_checked)]
 
-use std::{array::TryFromSliceError, convert::TryInto, mem};
+use std::{array::TryFromSliceError, convert::TryInto, mem, u8};
 
 /// Defines a type can be converted from a byte slice.
 /// ```
@@ -17,7 +15,7 @@ pub trait TryFromBytes: Sized {
     fn try_from_le_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError>;
     fn try_from_be_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError>;
 }
-/// Defines a type can be converted into a byte array.
+/// Defines a type can be converted into a byte vector.
 /// ```
 /// use num_bytes::IntoBytes;
 /// let a = 8u32;
@@ -25,8 +23,8 @@ pub trait TryFromBytes: Sized {
 /// assert_eq!(b,[8,0,0,0]);
 /// ```
 pub trait IntoBytes: Sized {
-    fn into_le_bytes(self) -> [u8; mem::size_of::<Self>()];
-    fn into_be_bytes(self) -> [u8; mem::size_of::<Self>()];
+    fn into_le_bytes(self) -> Vec<u8>;
+    fn into_be_bytes(self) -> Vec<u8>;
 }
 
 macro_rules! impl_try_from_bytes {
@@ -60,11 +58,11 @@ macro_rules! impl_try_from_bytes {
 macro_rules! impl_into_bytes {
     ($T: ident) => {
         impl IntoBytes for $T {
-            fn into_le_bytes(self) -> [u8; mem::size_of::<Self>()] {
-                self.to_le_bytes()
+            fn into_le_bytes(self) -> Vec<u8> {
+                Vec::from(self.to_le_bytes())
             }
-            fn into_be_bytes(self) -> [u8; mem::size_of::<Self>()] {
-                self.to_be_bytes()
+            fn into_be_bytes(self) -> Vec<u8> {
+                Vec::from(self.to_be_bytes())
             }
         }
     };
