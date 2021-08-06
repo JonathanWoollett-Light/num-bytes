@@ -2,7 +2,7 @@
 //!
 //! Defines `TryFromBytes` and `IntoBytes` traits and implements them on all numerical primitives.
 
-use std::{array::TryFromSliceError, convert::TryInto, mem, u8};
+use std::{array::TryFromSliceError, convert::TryInto, u8};
 
 /// Defines a type can be converted from a byte slice.
 /// ```
@@ -26,31 +26,14 @@ pub trait IntoBytes: Sized {
     fn into_le_bytes(self) -> Vec<u8>;
     fn into_be_bytes(self) -> Vec<u8>;
 }
-
 macro_rules! impl_try_from_bytes {
     ($T: ident) => {
         impl TryFromBytes for $T {
             fn try_from_le_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError> {
-                assert_eq!(
-                    bytes.len(),
-                    mem::size_of::<Self>(),
-                    "{} requires {} bytes, was given {} bytes.",
-                    std::any::type_name::<Self>(),
-                    mem::size_of::<Self>(),
-                    bytes.len()
-                );
                 Ok(Self::from_le_bytes(bytes.try_into()?))
             }
             fn try_from_be_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError> {
-                assert_eq!(
-                    bytes.len(),
-                    mem::size_of::<Self>(),
-                    "{} requires {} bytes, was given {} bytes.",
-                    std::any::type_name::<Self>(),
-                    mem::size_of::<Self>(),
-                    bytes.len()
-                );
-                Ok(Self::from_le_bytes(bytes.try_into()?))
+                Ok(Self::from_be_bytes(bytes.try_into()?))
             }
         }
     };
