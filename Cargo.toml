@@ -1,0 +1,16 @@
+[package]
+name = "num-bytes"
+version = "0.1.0"
+authors = ["Jonathan <jonthanwoollettlight@gmail.com>"]
+edition = "2018"
+
+description = "Traits for converting primitives into bytes."
+license = "Apache-2.0"
+exclude = ["tests"]
+
+repository = "https://github.com/JonathanWoollett-Light/num-bytes"
+documentation = "https://docs.rs/num-bytes/"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
