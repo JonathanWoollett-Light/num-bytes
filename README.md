@@ -7,11 +7,3 @@
 Traits for converting primitives into bytes.
 
 Kinda like a bad extension to [num](https://github.com/rust-num/num).
-
-```rust
-use num_bytes::FromBytes;
-fn into<T:FromBytes>(x:T) -> &
-let a = [8,0,0,0];
-let b = i32::from_le_bytes(a);
-assert_eq!(b, 8);
-```
