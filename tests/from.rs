@@ -47,17 +47,27 @@ fn from_i64() {
     assert_eq!(b, 8);
 }
 
-#[cfg(target_pointer_width = "64")]
 #[test]
 fn from_isize() {
+    #[cfg(target_pointer_width = "16")]
+    let a = [8, 0];
+    #[cfg(target_pointer_width = "32")]
+    let a = [8, 0, 0, 0, 0];
+    #[cfg(target_pointer_width = "64")]
     let a = [8, 0, 0, 0, 0, 0, 0, 0];
+
     let b = isize::from_le_bytes(a);
     assert_eq!(b, 8);
 }
-#[cfg(target_pointer_width = "64")]
 #[test]
 fn from_usize() {
+    #[cfg(target_pointer_width = "16")]
+    let a = [8, 0];
+    #[cfg(target_pointer_width = "32")]
+    let a = [8, 0, 0, 0, 0];
+    #[cfg(target_pointer_width = "64")]
     let a = [8, 0, 0, 0, 0, 0, 0, 0];
+
     let b = usize::from_le_bytes(a);
     assert_eq!(b, 8);
 }

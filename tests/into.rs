@@ -1,4 +1,5 @@
 use num_bytes::IntoBytes;
+
 #[test]
 fn into_u8() {
     let a = 8u8;
@@ -53,12 +54,22 @@ fn into_i64() {
 fn into_usize() {
     let a = 8usize;
     let b = a.into_le_bytes();
+    #[cfg(target_pointer_width = "16")]
+    assert_eq!(b, [8, 0]);
+    #[cfg(target_pointer_width = "32")]
+    assert_eq!(b, [8, 0, 0, 0]);
+    #[cfg(target_pointer_width = "64")]
     assert_eq!(b, [8, 0, 0, 0, 0, 0, 0, 0]);
 }
-#[cfg(target_pointer_width = "64")]
+
 #[test]
 fn into_isize() {
     let a = 8isize;
     let b = a.into_le_bytes();
+    #[cfg(target_pointer_width = "16")]
+    assert_eq!(b, [8, 0]);
+    #[cfg(target_pointer_width = "32")]
+    assert_eq!(b, [8, 0, 0, 0]);
+    #[cfg(target_pointer_width = "64")]
     assert_eq!(b, [8, 0, 0, 0, 0, 0, 0, 0]);
 }
