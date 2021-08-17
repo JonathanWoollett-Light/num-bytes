@@ -33,6 +33,7 @@ pub trait FromBytes: Sized {
 ///
 /// It simply says `FromBytes<8>` in documentation because the machine which has compiled the documentation is 64 bit.
 pub trait IntoBytes: Sized {
+    type Output;
     fn into_le_bytes(self) -> [u8; std::mem::size_of::<Self>()];
     fn into_be_bytes(self) -> [u8; std::mem::size_of::<Self>()];
 }
@@ -51,11 +52,12 @@ macro_rules! impl_from_bytes {
 }
 macro_rules! impl_into_bytes {
     ($T: ty) => {
-        impl IntoBytes for $T {
-            fn into_le_bytes(self) -> [u8; std::mem::size_of::<$T>()] {
+        impl IntoBytes for $T where [u8;std::mem::size_of::<$T>()]: Sized {
+            type Output = [u8;std::mem::size_of::<$T>()];
+            fn into_le_bytes(self) -> Self::Output {
                 self.to_le_bytes()
             }
-            fn into_be_bytes(self) -> [u8; std::mem::size_of::<$T>()] {
+            fn into_be_bytes(self) -> Self::Output {
                 self.to_be_bytes()
             }
         }

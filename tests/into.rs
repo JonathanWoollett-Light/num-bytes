@@ -1,6 +1,16 @@
 use num_bytes::IntoBytes;
 
 #[test]
+fn into_test() {
+    let a = 8isize;
+    
+    fn into<T:IntoBytes>(x:T) {
+        let arr:[u8;4] = x.into_le_bytes();
+        println!("x: {:.?}",)arr;
+    }
+}
+
+#[test]
 fn into_u8() {
     let a = 8u8;
     let b = a.into_le_bytes();
