@@ -47,3 +47,18 @@ fn into_i64() {
     let b = a.into_le_bytes();
     assert_eq!(b, [8, 0, 0, 0, 0, 0, 0, 0]);
 }
+
+#[cfg(target_pointer_width = "64")]
+#[test]
+fn into_usize() {
+    let a = 8usize;
+    let b = a.into_le_bytes();
+    assert_eq!(b, [8, 0, 0, 0, 0, 0, 0, 0]);
+}
+#[cfg(target_pointer_width = "64")]
+#[test]
+fn into_isize() {
+    let a = 8isize;
+    let b = a.into_le_bytes();
+    assert_eq!(b, [8, 0, 0, 0, 0, 0, 0, 0]);
+}
