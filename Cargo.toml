@@ -1,6 +1,6 @@
 [package]
 name = "num-bytes"
-version = "0.3.0"
+version = "0.4.0-beta"
 authors = ["Jonathan <jonthanwoollettlight@gmail.com>"]
 edition = "2018"
 
