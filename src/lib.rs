@@ -1,20 +1,21 @@
-//! A crate to allow converting generic primitives into bytes.
+//! A crate to allow converting generic from/into bytes.
 //!
-//! Defines `TryFromBytes` and `IntoBytes` traits and implements them on all numerical primitives.
+//! Defines `FromBytes` and `IntoBytes` traits.
+//! 
+//! Implements them on all numerical primitives.
 
-use std::{array::TryFromSliceError, convert::TryInto, u8};
-
-/// Defines a type can be converted from a byte slice.
+/// Defines a type can be converted from a byte array.
 /// ```
-/// use num_bytes::TryFromBytes;
+/// use num_bytes::FromBytes;
 /// let a = [8,0,0,0];
-/// let b = u32::try_from_le_bytes(&a).unwrap();
+/// let b = u32::from_le_bytes(a);
 /// assert_eq!(b,8);
 /// ```
-pub trait TryFromBytes: Sized {
-    fn try_from_le_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError>;
-    fn try_from_be_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError>;
+pub trait FromBytes<const T: usize> {
+    fn from_le_bytes(bytes: [u8; T]) -> Self;
+    fn from_be_bytes(bytes: [u8; T]) -> Self;
 }
+
 /// Defines a type can be converted into a byte vector.
 /// ```
 /// use num_bytes::IntoBytes;
@@ -26,14 +27,14 @@ pub trait IntoBytes: Sized {
     fn into_le_bytes(self) -> Vec<u8>;
     fn into_be_bytes(self) -> Vec<u8>;
 }
-macro_rules! impl_try_from_bytes {
-    ($T: ident) => {
-        impl TryFromBytes for $T {
-            fn try_from_le_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError> {
-                Ok(Self::from_le_bytes(bytes.try_into()?))
+macro_rules! impl_from_bytes {
+    ($T: ty, $N: tt) => {
+        impl FromBytes<$N> for $T {
+            fn from_le_bytes(bytes: [u8; $N]) -> Self {
+                Self::from_le_bytes(bytes)
             }
-            fn try_from_be_bytes(bytes: &[u8]) -> Result<Self, TryFromSliceError> {
-                Ok(Self::from_be_bytes(bytes.try_into()?))
+            fn from_be_bytes(bytes: [u8; $N]) -> Self {
+                Self::from_be_bytes(bytes)
             }
         }
     };
@@ -52,20 +53,32 @@ macro_rules! impl_into_bytes {
 }
 
 // Try from implementations.
-impl_try_from_bytes!(i8);
-impl_try_from_bytes!(i16);
-impl_try_from_bytes!(i32);
-impl_try_from_bytes!(i64);
-impl_try_from_bytes!(u8);
-impl_try_from_bytes!(u16);
-impl_try_from_bytes!(u32);
-impl_try_from_bytes!(u64);
+impl_from_bytes!(i8, 1);
+impl_from_bytes!(i16, 2);
+impl_from_bytes!(i32, 4);
+impl_from_bytes!(i64, 8);
+impl_from_bytes!(u8, 1);
+impl_from_bytes!(u16, 2);
+impl_from_bytes!(u32, 4);
+impl_from_bytes!(u64, 8);
 
-impl_try_from_bytes!(f32);
-impl_try_from_bytes!(f64);
+impl_from_bytes!(f32, 4);
+impl_from_bytes!(f64, 8);
 
-impl_try_from_bytes!(isize);
-impl_try_from_bytes!(usize);
+#[cfg(target_pointer_width = "16")]
+impl_from_bytes!(isize, 2);
+#[cfg(target_pointer_width = "16")]
+impl_from_bytes!(usize, 2);
+
+#[cfg(target_pointer_width = "32")]
+impl_from_bytes!(isize, 4);
+#[cfg(target_pointer_width = "32")]
+impl_from_bytes!(usize, 4);
+
+#[cfg(target_pointer_width = "64")]
+impl_from_bytes!(isize, 8);
+#[cfg(target_pointer_width = "64")]
+impl_from_bytes!(usize, 8);
 
 // Into implementations.
 impl_into_bytes!(i8);
