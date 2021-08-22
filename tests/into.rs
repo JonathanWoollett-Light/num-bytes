@@ -1,4 +1,20 @@
 use num_bytes::IntoBytes;
+
+#[test]
+fn generic() {
+    let a = 8i16;
+    let b = into_generic(a);
+    assert_eq!(b,[8,0]);
+
+    let a = 8i32;
+    let b = into_generic(a);
+    assert_eq!(b,[8,0,0,0]);
+
+    fn into_generic<T: IntoBytes<N>, const N: usize>(x: T) -> [u8;N] {
+        x.into_le_bytes()
+    }
+}
+
 #[test]
 fn into_u8() {
     let a = 8u8;

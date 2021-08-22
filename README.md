@@ -7,3 +7,22 @@
 Traits for converting primitives into bytes.
 
 Kinda like a bad extension to [num](https://github.com/rust-num/num).
+
+Usage is a little tricky:
+```rust
+let a = [8,0];
+let b: i16 = from_generic(a);
+assert_eq!(b,8);
+fn from_generic<T: num_bytes::FromBytes<N>, const N: usize>(x: [u8;N]) -> T {
+    T::from_le_bytes(x)
+}
+```
+and:
+```rust
+let a = 8i16;
+let b = into_generic(a);
+assert_eq!(b,[8,0]);
+fn into_generic<T: num_bytes::IntoBytes<N>, const N: usize>(x: T) -> [u8;N] {
+    x.into_le_bytes()
+}
+```
